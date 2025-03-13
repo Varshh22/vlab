@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f0f15;
+            color: white;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: left;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stats-row > div {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .charts-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .charts-row > div {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .bottom-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .bottom-row > div {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .card {
+            background-color: #6c5ce7;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px) scale(1.03); /* Slight pop-out effect */
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3); /* Stronger shadow on hover */
+            background-color: #7b68ee;
+        }
+
+        .dark-card {
+            background-color: #3a3670;
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+        }
+
+        .dark-card:hover {
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #ff6b81;
+        }
+
+        .dot-purple {
+            background-color: #e069fc;
+        }
+
+        .dot-cyan {
+            background-color: #00d2ff;
+        }
+
+        .dot-blue {
+            background-color: #4b7bec;
+        }
+
+        .more-button {
+            cursor: pointer;
+            font-size: 18px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .more-button:hover {
+            opacity: 1;
+        }
+
+        .large-number {
+            font-size: 28px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .trend {
+            font-size: 14px;
+        }
+
+        .trend-up {
+            color: #2ecc71;
+        }
+
+        .trend-down {
+            color: #ff6b6b;
+        }
+
+        /* Circle Chart */
+        .circle-chart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 300px;
+            position: relative;
+        }
+
+        .circle-chart {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+
+        .chart-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .chart-center h2 {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .chart-circle {
+            fill: none;
+            stroke-width: 10;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dashoffset 1s ease-in-out;
+        }
+
+        .chart-background {
+            stroke: rgba(255, 255, 255, 0.1);
+        }
+
+        .chart-purple {
+            stroke: #e069fc;
+            stroke-dasharray: 502;
+            stroke-dashoffset: 351; /* 30% of 502 = 150.6, 502 - 150.6 = 351.4 */
+            animation: circle-animation-purple 2s ease-out forwards;
+        }
+
+        .chart-blue {
+            stroke: #4b7bec;
+            stroke-dasharray: 440;
+            stroke-dashoffset: 220; /* 50% of 440 = 220 */
+            animation: circle-animation-blue 2s ease-out forwards;
+        }
+
+        .chart-cyan {
+            stroke: #00d2ff;
+            stroke-dasharray: 377;
+            stroke-dashoffset: 301; /* 20% of 377 = 75.4, 377 - 75.4 = 301.6 */
+            animation: circle-animation-cyan 2s ease-out forwards;
+        }
+
+        @keyframes circle-animation-purple {
+            from { stroke-dashoffset: 502; }
+            to { stroke-dashoffset: 351; }
+        }
+
+        @keyframes circle-animation-blue {
+            from { stroke-dashoffset: 440; }
+            to { stroke-dashoffset: 220; }
+        }
+
+        @keyframes circle-animation-cyan {
+            from { stroke-dashoffset: 377; }
+            to { stroke-dashoffset: 301; }
+        }
+
+        .legend {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-item span {
+            min-width: 60px;
+            text-align: right;
+        }
+
+        /* Bar Chart */
+        .bar-chart-container {
+            position: relative;
+            height: 300px;
+            padding-top: 20px;
+        }
+
+        .bar-chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .total-revenue {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .revenue-trend {
+            color: #2ecc71;
+            font-size: 14px;
+            background-color: rgba(46, 204, 113, 0.2);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+        }
+
+        .chart-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+        }
+
+        .chart-options {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            gap: 5px;
+        }
+
+        .chart-grid {
+            position: relative;
+            height: 200px;
+            display: flex;
+            align-items: flex-end;
+            gap: 5px;
+            padding-top: 20px;
+        }
+
+        .grid-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .grid-line {
+            height: 1px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .grid-label {
+            position: absolute;
+            left: 0;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .month-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+        }
+
+        .month-label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            width: calc(100% / 12);
+            text-align: center;
+        }
+
+        .bar-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            position: relative;
+        }
+
+        .bar {
+            width: 10px;
+            background-color: #e069fc;
+            border-radius: 2px;
+            position: absolute;
+            bottom: 0;
+            transition: height 1s ease-out;
+        }
+
+        .bar-current {
+            background-color: #e069fc;
+            z-index: 1;
+            height: 0;
+        }
+
+        .bar-subscriber {
+            background-color: #4b7bec;
+            margin-left: 10px;
+            z-index: 2;
+            height: 0;
+        }
+
+        .bar-new {
+            background-color: #00d2ff;
+            margin-left: 20px;
+            z-index: 3;
+            height: 0;
+        }
+
+        /* Product List */
+        .product-list {
+            margin-top: 15px;
+        }
+
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .product-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .product-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .product-image {
+            width: 40px;
+            height: 40px;
+            background-color: #2d3436;
+            border-radius: 5px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-details {
+            flex: 1;
+        }
+
+        .product-name {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .product-stock {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .product-price {
+            font-weight: 500;
+        }
+
+        /* Team Progress */
+        .team-list {
+            margin-top: 15px;
+        }
+
+        .team-member {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .team-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #fd79a8;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .team-info {
+            flex: 1;
+        }
+
+        .team-name {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .team-email {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .team-progress {
+            font-weight: bold;
+            min-width: 40px;
+            text-align: right;
+        }
+
+        /* Gauge Chart */
+        .gauge-chart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            position: relative;
+        }
+
+        .gauge-chart {
+            position: relative;
+            width: 200px;
+            height: 120px;
+            overflow: hidden;
+        }
+
+        .gauge-center {
+            position: absolute;
+            top: 80%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .gauge-center h2 {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .gauge-center p {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .gauge-arc {
+            fill: none;
+            stroke-width: 20;
+            stroke-linecap: round;
+        }
+
+        .gauge-background {
+            stroke: rgba(255, 255, 255, 0.1);
+        }
+
+        .gauge-progress {
+            stroke: #e069fc;
+            stroke-dasharray: 314;
+            stroke-dashoffset: 63; /* 80% filled: 314 * 0.2 = 63 */
+            animation: gauge-animation 2s ease-out forwards;
+        }
+
+        @keyframes gauge-animation {
+            from { stroke-dashoffset: 314; }
+            to { stroke-dashoffset: 63; }
+        }
+
+        .gauge-legend {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .gauge-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-row, .charts-row, .bottom-row {
+                flex-direction: column;
+            }
+            
+            .stats-row > div, .charts-row > div, .bottom-row > div {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+
+        /* Animation for numbers */
+        @keyframes count-up {
+            from { content: "0"; }
+            to { content: attr(data-target); }
+        }
+
+        .animate-number {
+            position: relative;
+        }
+
+        .animate-number::after {
+            content: "0";
+            animation: count-up 2s forwards;
+            animation-timing-function: ease-out;
+        }
+
+        /* Export button */
+        .export-btn {
+            background-color: #111;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .export-btn:hover {
+            background-color: #222;
+        }
+
+        /* Pulse animation for dots */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.7; }
+        }
+
+        .dot {
+            animation: pulse 2s infinite;
+        }
+
+        /* Pop-in animation for cards */
+        @keyframes pop-in {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .card {
+            animation: pop-in 0.5s forwards;
+            opacity: 0;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dashboard</h1>
+        
+        <div class="stats-row">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="dot"></div>
+                        <span>Save Products</span>
+                    </div>
+                    <div class="more-button">...</div>
+                </div>
+                <div>
+                    <span class="large-number" id="saveProducts">50.8K</span>
+                    <span class="trend trend-up">+4.7%</span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="dot"></div>
+                        <span>Stock Products</span>
+                    </div>
+                    <div class="more-button">...</div>
+                </div>
+                <div>
+                    <span class="large-number" id="stockProducts">23.6K</span>
+                    <span class="trend trend-down">-2.3%</span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="dot"></div>
+                        <span>Sale Products</span>
+                    </div>
+                    <div class="more-button">...</div>
+                </div>
+                <div>
+                    <span class="large-number" id="saleProducts">756</span>
+                    <span class="trend trend-up">+3.2%</span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="dot"></div>
+                        <span>Average Revenue</span>
+                    </div>
+                    <div class="more-button">...</div>
+                </div>
+                <div>
+                    <span class="large-number" id="avgRevenue">2.3K</span>
+                    <span class="trend trend-up">+8.4%</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="charts-row">
+            <div class="card dark-card">
+                <div class="card-header">
+                    <h3>Website Visitors</h3>
+                    <button class="export-btn">
+                        Export <span>↓</span>
+                    </button>
+                </div>
+                
+                <div class="circle-chart-container">
+                    <div class="circle-chart">
+                        <svg width="200" height="200" viewBox="0 0 200 200">
+                            <!-- Background circles -->
+                            <circle class="chart-circle chart-background" cx="100" cy="100" r="80"></circle>
+                            <circle class="chart-circle chart-background" cx="100" cy="100" r="70"></circle>
+                            <circle class="chart-circle chart-background" cx="100" cy="100" r="60"></circle>
+                            
+                            <!-- Data circles -->
+                            <circle class="chart-circle chart-purple" cx="100" cy="100" r="80"></circle>
+                            <circle class="chart-circle chart-blue" cx="100" cy="100" r="70"></circle>
+                            <circle class="chart-circle chart-cyan" cx="100" cy="100" r="60"></circle>
+                        </svg>
+                        
+                        <div class="chart-center">
+                            <h2>150k</h2>
+                        </div>
+                    </div>
+                    
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="dot dot-purple"></div>
+                            <div>Organic</div>
+                            <span>30%</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="dot dot-blue"></div>
+                            <div>Social</div>
+                            <span>50%</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="dot dot-cyan"></div>
+                            <div>Direct</div>
+                            <span>20%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card dark-card">
+                <div class="bar-chart-container">
+                    <div class="bar-chart-header">
+                        <div>
+                            <h3>Revenue by customer type</h3>
+                            <div class="total-revenue">$240.8K</div>
+                            <span class="revenue-trend">+4.9%</span>
+                        </div>
+                        
+                        <div>
+                            <div class="chart-legend">
+                                <div class="chart-legend-item">
+                                    <div class="dot dot-purple"></div>
+                                    <div>Current clients</div>
+                                </div>
+                                <div class="chart-legend-item">
+                                    <div class="dot dot-blue"></div>
+                                    <div>Subscribers</div>
+                                </div>
+                                <div class="chart-legend-item">
+                                    <div class="dot dot-cyan"></div>
+                                    <div>New customers</div>
+                                </div>
+                            </div>
+                            
+                            <div class="chart-options">
+                                <span>Jan 2024 - Dec 2024</span>
+                                <span>▼</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-grid">
+                        <div class="grid-lines">
+                            <div class="grid-line">
+                                <span class="grid-label">100K</span>
+                            </div>
+                            <div class="grid-line">
+                                <span class="grid-label">80K</span>
+                            </div>
+                            <div class="grid-line">
+                                <span class="grid-label">40K</span>
+                            </div>
+                            <div class="grid-line">
+                                <span class="grid-label">20K</span>
+                            </div>
+                            <div class="grid-line">
+                                <span class="grid-label">0K</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Jan -->
+                        <div class="bar-group">
+                            <div class="bar bar-current" style="height: 40%"></div>
+                            <div class="bar bar-subscriber" style="height: 10%"></div>
+                            <div class="bar bar-new" style="height: 5%"></div>
+                        </div>
+                        
+                        <!-- Feb -->
+                        <div class="bar-group">
+                            <div class="bar bar-current" style="height: 50%"></div>
+                            <div class="bar bar-subscriber" style="height: 15%"></div>
+                            <div class="bar bar-new" style="height: 10%"></div>
+                        </div>
+                        
+                        <!-- Mar -->
+                        <div class="bar-group">
+                            <div class="bar bar-current" style="height: 65%"></div>
+                            <div class="bar bar-subscriber" style="height: 25%"></div>
+                            <div class="bar bar-new" style="height: 5%"></div>
+                        </div>
+                        
+                        <!-- Apr -->
+                        <div class="bar-group">
+                            <div class="bar bar-current" style="height: 55%"></div>
+                            <div class="bar bar-subscriber" style="height: 20%"></div>
+                            <div class="bar bar-new" style="height: 5%"></div>
+                        </div>
+                        
+                        <!-- May -->
+                        <div class="bar-group">
+                            <div class="bar bar-current" style="height: 30%"></div>
+                            <div class="bar bar-subscriber" style="height: 10%"></div>
+                            <div class="bar bar-new" style="height: 5%"></div>
+                        </div>
+                        
+                        <!-- Jun -->
+                        <div class="bar-group">
+                            <div class="bar bar-current" style="height: 35%"></div>
+                            <div class="bar bar-subscriber" style="height: 25%"></div>
+                            <div class="bar bar-new" style="height: 5%"></div>
+                        </div>
+                        
+                        <!-- Jul -->
+                        <div class="bar-group">
+                            <div class="bar bar-current" style="height: 20%"></div>
+                            <div class="bar bar-subscriber" style="height: 10%"></div>
+                            <div class="bar bar-new" style="height: 5%"></div>
+                        </div>
+                        
+                        <!-- Aug -->
+                        <div class="bar-group">
+                            <div class="bar bar-current" style="height: 50%"></div>
+                            <div class="bar bar-subscriber" style="height: 20%"></div>
+                            <div class="bar bar-new" style="height: 5%"></div>
+                        </div>
+                        
+                        <!-- Sep -->
+                        <div class="bar-group">
+                            <div class="bar bar-current" style="height: 30%"></div>
+                            <div class="bar bar-subscriber" style="height: 10%"></div>
+                            <div class="bar bar-new" style="height: 5%"></div>
+                        </div>
+                        
+                        <!-- Oct -->
+                        <div class="bar-group">
+                            <div class="bar bar-current" style="height: 25%"></div>
+                            <div class="bar bar-subscriber" style="height: 15%"></div>
+                            <div class="bar bar-new" style="height: 5%"></div>
+                        </div>
+                        
+                        <!-- Nov -->
+                        <div class="bar-group">
+                            <div class="bar bar-current" style="height: 35%"></div>
+                            <div class="bar bar-subscriber" style="height: 15%"></div>
+                            <div class="bar bar-new" style="height: 5%"></div>
+                        </div>
+                        
+                        <!-- Dec -->
+                        <div class="bar-group">
+                            <div class="bar bar-current" style="height: 45%"></div>
+                            <div class="bar bar-subscriber" style="height: 20%"></div>
+                            <div class="bar bar-new" style="height: 10%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="month-labels">
+                        <div class="month-label">Jan</div>
+                        <div class="month-label">Feb</div>
+                        <div class="month-label">Mar</div>
+                        <div class="month-label">Apr</div>
+                        <div class="month-label">May</div>
+                        <div class="month-label">Jun</div>
+                        <div class="month-label">Jul</div>
+                        <div class="month-label">Aug</div>
+                        <div class="month-label">Sep</div>
+                        <div class="month-label">Oct</div>
+                        <div class="month-label">Nov</div>
+                        <div class="month-label">Dec</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bottom-row">
+            <div class="card dark-card">
+                <h3>Products</h3>
+                
+                <div class="product-list">
+                    <div class="product-header">
+                        <span>Products</span>
+                        <span>Price</span>
+                    </div>
+                    
+                    <div class="product-item">
+                        <div class="product-image">📱</div>
+                        <div class="product-details">
+                            <div class="product-name">iPhone 14 Pro Max</div>
+                            <div class="product-stock">524 in stock</div>
+                        </div>
+                        <div class="product-price">$ 1,099.00</div>
+                    </div>
+                    
+                    <div class="product-item">
+                        <div class="product-image">⌚</div>
+                        <div class="product-details">
+                            <div class="product-name">Apple Watch S8</div>
+                            <div class="product-stock">320 in stock</div>
+                        </div>
+                        <div class="product-price">$ 799.00</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card dark-card">
+                <h3>Team progress</h3>
+                
+                <div class="team-list">
+                    <div class="team-member">
+                        <div class="team-avatar">JC</div>
+                        <div class="team-info">
+                            <div class="team-name">John Carter</div>
+                            <div class="team-email">contact@sophiemoore.com</div>
+                        </div>
+                        <div class="team-progress">60%</div>
+                    </div>
+                    
+                    <div class="team-member">
+                        <div class="team-avatar">SM</div>
+                        <div class="team-info">
+                            <div class="team-name">Sophie Moore</div>
+                            <div class="team-email">contact@sophiemoore.com</div>
+                        </div>
+                        <div class="team-progress">33%</div>
+                    </div>
+                    
+                    <div class="team-member">
+                        <div class="team-avatar">MC</div>
+                        <div class="team-info">
+                            <div class="team-name">Matt Cannon</div>
+                            <div class="team-email">info@mattcannon.com</div>
+                        </div>
+                        <div class="team-progress">75%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card dark-card">
+                <h3>Website Visitors</h3>
+                
+                <div class="gauge-chart-container">
+                    <div class="gauge-chart">
+                        <svg width="200" height="120" viewBox="0 0 200 120">
+                            <path 
+                                class="gauge-arc gauge-background" 
+                                d="M 20 100 A 80 80 0 0 1 180 100"

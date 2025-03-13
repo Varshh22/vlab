@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glass Login Page</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    :root {
+      --text-primary: #ffffff;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+    
+    body {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #161623;
+      overflow: hidden;
+    }
+    
+    .background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      overflow: hidden;
+      z-index: 1;
+    }
+    
+    .grid-span {
+      position: relative;
+      display: block;
+      width: calc(6.25vw - 2px);
+      height: calc(6.25vw - 2px);
+      background-color: #181818;
+      z-index: 2;
+      transition: 1.5s;
+      margin: 1px;
+    }
+    
+    .grid-span:hover {
+      background-color: #6F5FE7;
+      transition: 0s;
+    }
+    
+    .signin {
+      position: relative;
+      width: 400px;
+      background-color: rgba(255, 255, 255, 0.1);
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
+    
+    .content {
+      position: relative;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    
+    .title {
+      color: #fff;
+      font-size: 2em;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .form {
+      width: 100%;
+    }
+    
+    .links {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    
+    .link {
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.9em;
+    }
+    
+    .input-container {
+      width: 100%;
+      margin-bottom: 16px;
+    }
+    
+    .input-label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+    
+    .input-field {
+      width: 100%;
+      padding: 10px 15px;
+      outline: none;
+      font-size: 1em;
+      color: #333;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .password-container {
+      position: relative;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+    
+    .eye-container {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      width: 35px;
+      height: 35px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .eye {
+      position: relative;
+      width: 25px;
+      height: 25px;
+      background-color: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    
+    .pupil {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #000;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    
+    .eyelid {
+      position: absolute;
+      width: 100%;
+      height: 0;
+      background-color: #333;
+      left: 0;
+      z-index: 2;
+    }
+    
+    .top-eyelid {
+      top: 0;
+    }
+    
+    .bottom-eyelid {
+      bottom: 0;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 10px 15px;
+      background-color: #6F5FE7;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.3s;
+    }
+    
+    .btn:hover {
+      background-color: #5A4CD6;
+    }
+  </style>
+</head>
+<body>
+  <section class="background" id="grid-background"></section>
+  
+  <div class="signin">
+    <div class="content">
+      <h2 class="title">Sign In</h2>
+      <form class="form" id="login-form">
+        <div class="input-container">
+          <label class="input-label">Username</label>
+          <input type="text" id="username" class="input-field">
+        </div>
+        
+        <div class="password-container">
+          <label class="input-label">Password</label>
+          <div style="position: relative;">
+            <input type="password" id="password" class="input-field">
+            <div class="eye-container" id="eye-container">
+              <div class="eye" id="eye">
+                <div class="pupil" id="pupil"></div>
+                <div class="eyelid top-eyelid" id="top-eyelid"></div>
+                <div class="eyelid bottom-eyelid" id="bottom-eyelid"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="links">
+          <a href="#" class="link">Forgot Password</a>
+          <a href="#" class="link">Signup</a>
+        </div>
+        
+        <button type="submit" class="btn">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Create grid cells for background
+    function createGridCells() {
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+      const cols = Math.ceil(windowWidth / (windowWidth * 0.0625));
+      const rows = Math.ceil(windowHeight / (windowWidth * 0.0625));
+      
+      const totalCells = rows * cols;
+      const gridBackground = document.getElementById('grid-background');
+      
+      for (let i = 0; i < totalCells; i++) {
+        const gridSpan = document.createElement('span');
+        gridSpan.className = 'grid-span';
+        
+        // Add hover functionality
+        gridSpan.addEventListener('mouseenter', function() {
+          this.style.backgroundColor = '#6F5FE7';
+          this.style.transition = '0s';
+        });
+        
+        gridSpan.addEventListener('mouseleave', function() {
+          this.style.backgroundColor = '#181818';
+          this.style.transition = '1.5s';
+        });
+        
+        gridBackground.appendChild(gridSpan);
+      }
+    }
+    
+    // Password toggle and eye animation functionality
+    function setupPasswordEye() {
+      const eyeContainer = document.getElementById('eye-container');
+      const eye = document.getElementById('eye');
+      const pupil = document.getElementById('pupil');
+      const topEyelid = document.getElementById('top-eyelid');
+      const bottomEyelid = document.getElementById('bottom-eyelid');
+      const passwordInput = document.getElementById('password');
+      let isVisible = false;
+      
+      // Start blinking animation
+      function blink() {
+        const delay = gsap.utils.random(2, 8);
+        const duration = 0.2; // Faster for natural blink
+        const repeat = Math.random() > 0.5 ? 2 : 1;
+        
+        const blinkTl = gsap.timeline({
+          delay,
+          onComplete: () => blink()
+        });
+        
+        // Animate top and bottom eyelids to close and open
+        blinkTl
+          .to([topEyelid, bottomEyelid], {
+            duration: duration / 2,
+            height: "50%",
+            ease: "power1.in"
+          })
+          .to([topEyelid, bottomEyelid], {
+            duration: duration / 2,
+            height: "0%",
+            ease: "power1.out"
+          })
+          .repeat(repeat)
+          .repeatDelay(0.1);
+      }
+      
+      blink();
+      
+      // Eye follows cursor
+      document.addEventListener('mousemove', (e) => {
+        if (!eye || !pupil) return;
+        
+        // Calculate distance from cursor to eye center
+        const eyeRect = eye.getBoundingClientRect();
+        const eyeCenterX = eyeRect.left + eyeRect.width / 2;
+        const eyeCenterY = eyeRect.top + eyeRect.height / 2;
+        
+        // Calculate the distance and angle
+        const deltaX = e.clientX - eyeCenterX;
+        const deltaY = e.clientY - eyeCenterY;
+        
+        // Limit movement to the eye boundaries (70% of eye radius)
+        const radius = eyeRect.width * 0.3;
+        const distance = Math.min(Math.sqrt(deltaX * deltaX + deltaY * deltaY), radius);
+        const angle = Math.atan2(deltaY, deltaX);
+        
+        // Calculate new position
+        const moveX = Math.cos(angle) * distance;
+        const moveY = Math.sin(angle) * distance;
+        
+        // Apply movement
+        gsap.to(pupil, {
+          duration: 0.3,
+          x: moveX,
+          y: moveY,
+          ease: "power2.out"
+        });
+      });
+      
+      // Toggle password visibility
+      eyeContainer.addEventListener('click', () => {
+        const toggleTl = gsap.timeline();
+        
+        if (!isVisible) {
+          // Close eye first, then change to text type
+          toggleTl
+            .to([topEyelid, bottomEyelid], {
+              duration: 0.15,
+              height: "50%",
+              ease: "power2.in"
+            })
+            .add(() => {
+              passwordInput.type = "text";
+              eye.style.backgroundColor = "#00f";
+            })
+            .to([topEyelid, bottomEyelid], {
+              duration: 0.15,
+              height: "0%",
+              ease: "power2.out"
+            });
+        } else {
+          // Close eye first, then change to password type
+          toggleTl
+            .to([topEyelid, bottomEyelid], {
+              duration: 0.15,
+              height: "50%",
+              ease: "power2.in"
+            })
+            .add(() => {
+              passwordInput.type = "password";
+              eye.style.backgroundColor = "#fff";
+            })
+            .to([topEyelid, bottomEyelid], {
+              duration: 0.15,
+              height: "0%",
+              ease: "power2.out"
+            });
+        }
+        
+        isVisible = !isVisible;
+      });
+    }
+    
+    // Form submission
+    function setupForm() {
+      const loginForm = document.getElementById('login-form');
+      
+      loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        
+        console.log('Login attempt:', { username, password });
+        // Add your authentication logic here
+        // If successful, redirect: window.location.href = '/dashboard';
+        alert('Login functionality would go here in a real application');
+      });
+    }
+    
+    // Initialize everything
+    document.addEventListener('DOMContentLoaded', () => {
+      createGridCells();
+      setupPasswordEye();
+      setupForm();
+    });
+  </script>
+</body>
+</html>

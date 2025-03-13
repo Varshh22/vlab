@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Duck UI Sidebar</title>
+  <style>
+    :root {
+      --sidebar-bg: #121212;
+      --sidebar-width: 220px;
+      --purple-accent: #6E56CF;
+      --text-color: #FFFFFF;
+      --text-secondary: #A9A9A9;
+      --hover-bg: #1E1E1E;
+      --active-bg: #2A2A2A;
+      --icon-color: #6E56CF;
+      --toggle-size: 24px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+
+    body {
+      background-color: #1E1E1E; /* Just for demo, can be removed */
+    }
+    
+    .sidebar {
+      width: var(--sidebar-width);
+      height: 100vh;
+      background-color: var(--sidebar-bg);
+      color: var(--text-color);
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      transition: width 0.3s ease;
+    }
+
+    /* Brand section */
+    .brand {
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 10px;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      fill: var(--purple-accent);
+      opacity: 0.9;
+    }
+
+    .brand-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-name {
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .brand-email {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* Navigation menu */
+    .menu {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 5px;
+      transition: background-color 0.2s ease;
+    }
+
+    .menu-item:hover {
+      background-color: var(--hover-bg);
+    }
+
+    .menu-item.active {
+      background-color: var(--active-bg);
+    }
+
+    .menu-icon {
+      width: 20px;
+      height: 20px;
+      color: var(--icon-color);
+    }
+
+    .menu-text {
+      font-size: 14px;
+    }
+
+    /* Bottom section */
+    .bottom-section {
+      margin-top: auto;
+      padding: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* Theme toggler */
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 15px;
+      margin-top: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .theme-toggle:hover {
+      background-color: var(--hover-bg);
+    }
+
+    .toggle-track {
+      width: 40px;
+      height: 24px;
+      background-color: var(--active-bg);
+      border-radius: 12px;
+      position: relative;
+      transition: background-color 0.3s ease;
+    }
+
+    .toggle-thumb {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: var(--toggle-size);
+      height: var(--toggle-size);
+      border-radius: 50%;
+      background-color: var(--purple-accent);
+      transition: transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+    }
+
+    /* For responsive design */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 60px;
+      }
+
+      .brand-info, .menu-text {
+        display: none;
+      }
+
+      .brand {
+        justify-content: center;
+      }
+
+      .theme-toggle {
+        padding: 10px 0;
+        justify-content: center;
+      }
+
+      .toggle-text {
+        display: none;
+      }
+
+      .toggle-track {
+        width: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar Component -->
+  <div class="sidebar">
+    <!-- Brand Section -->
+    <div class="brand">
+      <svg class="brand-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M19.95 21c-1.001.019-1.982-.119-2.931-.406-1.71.654-4.09.654-5.799 0-1.71.654-4.09.654-5.799 0-2.548.977-4.585.022-5.435-1.935-.646-1.191-.865-2.507-.633-3.807.466-1.307 1.484-2.322 2.798-2.778.253-.544.624-1.031 1.089-1.442-1.007-2.176-.507-5.638 1.361-6.595.693-.344 1.485-.448 2.24-.295.756-.153 1.548-.049 2.24.295 1.868.957 2.37 4.419 1.361 6.595.465.41.836.898 1.089 1.442 1.314.456 2.332 1.471 2.798 2.778.232 1.3.013 2.616-.633 3.807-.563 1.035-1.604 1.711-2.746 1.841zM12.04 18.259c1.469.007 2.416.315 3.06.627a6.11 6.11 0 0 0 1.868.351c.488-.022.946-.224 1.272-.56.419-.428.572-1.069.507-1.707-.105-.811-.524-1.532-1.151-1.985-.188-.108-.396-.184-.612-.225a.536.536 0 0 1-.438-.622.538.538 0 0 1 .624-.437c.303.057.595.156.871.295.209-.428.317-.909.313-1.396C18.342 11.219 17.08 10 15.543 10c-.245 0-.484.28-.719.084-.73.173-1.481.173-2.211 0-.234-.056-.473-.084-.719-.084-1.535 0-2.797 1.219-2.81 2.6-.004.487.104.968.313 1.396.275-.14.568-.238.871-.295a.538.538 0 0 1 .624.437.536.536 0 0 1-.438.622c-.216.04-.423.116-.612.224-.627.453-1.045 1.175-1.151 1.986-.066.638.088 1.279.507 1.707.326.336.784.538 1.272.56.637-.019 1.267-.141 1.868-.351.644-.312 1.591-.62 3.06-.627zM11.282 15a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3.436 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-2.218-3a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z"/>
+      </svg>
+      <div class="brand-info">
+        <div class="brand-name">Duck UI</div>
+        <div class="brand-email">Duckui@demo.com</div>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="menu">
+      <div class="menu-item active">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 13H10V19H4V13ZM4 5H10V11H4V5ZM12 5H18V11H12V5ZM12 13H18V19H12V13Z" fill="currentColor"/>
+        </svg>
+        <span class="menu-text">Dashboard</span>
+      </div>
+
+      <div class="menu-item">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13 2.05V4.05C16.39 4.59 19 7.55 19 11C19 14.45 16.39 17.41 13 17.95V19.95C17.5 19.41 21 15.64 21 11C21 6.36 17.5 2.59 13 2.05ZM5 11C5 7.83 7.83 5 11 5V3C6.72 3 3 6.72 3 11C3 15.28 6.72 19 11 19V17C7.83 17 5 14.17 5 11ZM11 8V14L15 11L11 8Z" fill="currentColor"/>
+        </svg>
+        <span class="menu-text">My Experiments</span>
+      </div>
+
+      <div class="menu-item">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 13H5V11H3V13ZM3 17H5V15H3V17ZM3 9H5V7H3V9ZM7 13H21V11H7V13ZM7 17H21V15H7V17ZM7 7V9H21V7H7Z" fill="currentColor"/>
+        </svg>
+        <span class="menu-text">All Experiments</span>
+      </div>
+
+      <div class="menu-item">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20ZM12.5 7H11V13L16.2 16.2L17 14.9L12.5 12.2V7Z" fill="currentColor"/>
+        </svg>
+        <span class="menu-text">To-Do List</span>
+      </div>
+    </div>
+
+    <!-- Bottom Section -->
+    <div class="bottom-section">
+      <div class="menu-item">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17 7L15.59 8.41L18.17 11H8V13H18.17L15.59 15.58L17 17L22 12L17 7ZM4 5H12V3H4C2.9 3 2 3.9 2 5V19C2 20.1 2.9 21 4 21H12V19H4V5Z" fill="currentColor"/>
+        </svg>
+        <span class="menu-text">Logout</span>
+      </div>
+
+      <div class="theme-toggle">
+        <div class="toggle-icon">
+          <svg class="menu-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6.76 4.84L4.96 3.04L3.55 4.45L5.35 6.25L6.76 4.84ZM4 10.5H1V12.5H4V10.5ZM13 0.55H11V3.5H13V0.55ZM20.45 4.45L19.04 3.04L17.24 4.84L18.65 6.25L20.45 4.45ZM17.24 18.16L19.04 19.96L20.45 18.55L18.65 16.75L17.24 18.16ZM20 10.5V12.5H23V10.5H20ZM12 5.5C8.69 5.5 6 8.19 6 11.5C6 14.81 8.69 17.5 12 17.5C15.31 17.5 18 14.81 18 11.5C18 8.19 15.31 5.5 12 5.5ZM11 22.45H13V19.5H11V22.45ZM3.55 18.54L4.96 19.95L6.76 18.15L5.35 16.74L3.55 18.54Z" fill="currentColor"/>
+          </svg>
+        </div>
+        <span class="toggle-text menu-text">Light mode</span>
+        <div class="toggle-track">
+          <div class="toggle-thumb">
+            <!-- Moon Icon -->
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2.81C10.84 1.98 9.41 1.5 7.96 1.5C4.34 1.5 1.5 4.34 1.5 7.96C1.5 9.41 1.98 10.84 2.81 12C1.98 13.16 1.5 14.59 1.5 16.04C1.5 19.66 4.34 22.5 7.96 22.5C9.41 22.5 10.84 22.02 12 21.19C13.16 22.02 14.59 22.5 16.04 22.5C19.66 22.5 22.5 19.66 22.5 16.04C22.5 14.59 22.02 13.16 21.19 12C22.02 10.84 22.5 9.41 22.5 7.96C22.5 4.34 19.66 1.5 16.04 1.5C14.59 1.5 13.16 1.98 12 2.81Z" fill="white"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const menuItems = document.querySelectorAll(".menu-item");
+  
+      menuItems.forEach((item) => {
+        item.addEventListener("click", function () {
+          // Remove 'active' from all items
+          menuItems.forEach((el) => el.classList.remove("active"));
+          
+          // Add 'active' to clicked item
+          this.classList.add("active");
+        });
+      });
+    });
+  </script>
+  
+</body>
+</html>
